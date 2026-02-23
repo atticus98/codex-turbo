@@ -1,0 +1,19 @@
+# codex-turbo 示例配置（适配 Codex CLI v0.104.0）
+# 按你实际环境调整；不同 provider 字段可能略有差异。
+
+model_provider = "cch"
+model = "gpt-5.3-codex"
+model_reasoning_effort = "xhigh"
+sandbox_mode = "workspace-write"
+
+personality = "pragmatic"
+web_search = "live"
+network_access = true
+disable_response_storage = true
+
+[features]
+multi_agent = true
+
+# 可选：如果你要保守一点，可改成：
+# sandbox_mode = "read-only"
+# model_reasoning_effort = "high"
