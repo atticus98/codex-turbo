@@ -24,49 +24,117 @@
 .
 ├── README.md
 ├── docs
-│   ├── quick-start.md
 │   └── faq.md
 └── templates
     ├── AGENTS.template.md
     └── config.toml.example
 ```
 
-## 快速开始
+## 快速上手（5 分钟）
 
-1. 克隆仓库
+目标：把你的 Codex CLI 切到“并行 + 模板化”工作模式。
+
+### 1. 克隆仓库
 
 ```bash
 git clone <your-repo-url>
 cd codex-turbo
 ```
 
-2. 先看 5 分钟上手
+### 2. 准备
 
-- `docs/quick-start.md`
+- 确保 Codex CLI 版本为 `v0.104.0`（本文档按该版本适配）
+- 本地有 `~/.codex/` 目录
 
-3. 复制 / 合并模板到你的 Codex 环境
+### 3. 启用多代理
 
-```bash
-cp templates/AGENTS.template.md ~/.codex/AGENTS.md
-cp templates/config.toml.example ~/.codex/config.toml
-```
+在 Codex CLI 内执行：
 
-> 如果你本地已经有 `~/.codex/AGENTS.md` 或 `~/.codex/config.toml`，建议先复制为
-> `*.template` 后手动合并，避免直接覆盖自定义配置。
+1. 进入 `/experimental`
+2. 勾选 `Multi-agents`
 
-4. 打开 Codex CLI，确认已开启多代理
-
-- 在 `/experimental` 中勾选 `Multi-agents`
-- 或直接检查 `~/.codex/config.toml`：
+然后检查 `~/.codex/config.toml` 是否包含：
 
 ```toml
 [features]
 multi_agent = true
 ```
 
+> 如果没有这段，可以手动补上。
+
+### 4. 放置模板
+
+把本仓库模板放到你的用户目录。你可以按场景二选一：
+
+1. 首次使用（直接复制）
+
+```bash
+cp templates/AGENTS.template.md ~/.codex/AGENTS.md
+cp templates/config.toml.example ~/.codex/config.toml
+```
+
+2. 已有本地配置（建议手动合并，不直接覆盖）
+
+```bash
+cp templates/AGENTS.template.md ~/.codex/AGENTS.template.md
+cp templates/config.toml.example ~/.codex/config.toml.template
+```
+
+然后自行对比并合并关键差异（按你习惯用 diff 或编辑器 merge）。
+
+### 5. 最小验证
+
+用一个 20~30 分钟的小任务测试：
+
+- 任务可拆成 2~3 个独立子任务
+- 子任务无写冲突
+- 最后统一汇总结果
+
+验证标准：
+
+- 并行任务确实同时执行
+- 输出质量可控，不是“快但乱”
+- token 成本在你的预算范围内
+
+### 6. 推荐迭代节奏
+
+1. 先抄模板直接跑
+2. 跑完一轮再裁剪规则
+3. 每周复盘一次 AGENTS 文档
+
+做到这三步，基本就进入正循环了。
+
+### 7. 推荐最小配置（已合并）
+
+下面这份 `~/.codex/config.toml` 最小配置，够你先稳定跑起来：
+
+```toml
+model_provider = "cch"
+model = "gpt-5.3-codex"
+model_reasoning_effort = "xhigh"
+sandbox_mode = "workspace-write"
+
+personality = "pragmatic"
+web_search = "live"
+network_access = true
+disable_response_storage = true
+
+[features]
+multi_agent = true
+```
+
+关键参数速记：
+
+- `multi_agent = true`：多代理总开关（最重要）
+- `model_reasoning_effort`：推理深度，越高通常越贵
+- `sandbox_mode`：建议先用 `workspace-write`，兼顾安全和效率
+- `web_search = "live"`：需要实时信息时更有用
+
+> 说明：本文档按 Codex CLI `v0.104.0` 适配；不同版本或供应商字段名可能有差异，请以你本地 CLI 支持为准。
+
 ## 文档导航
 
-- `docs/quick-start.md`：最短路径跑起来
+- `README.md`：快速上手（本页）
 - `docs/faq.md`：常见坑与排查
 - `templates/AGENTS.template.md`：开箱可改模板
 - `templates/config.toml.example`：参考配置
