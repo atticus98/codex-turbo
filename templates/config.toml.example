@@ -14,6 +14,13 @@ disable_response_storage = true
 [features]
 multi_agent = true
 
+
+[agents]
+# 最大的agents 的数量，设置的比较保守为 5
+max_threads = 5 
+# 1 层深度，避免子代理开子代理
+max_depth = 1
+
 # 可选：如果你要保守一点，可改成：
 # sandbox_mode = "read-only"
 # model_reasoning_effort = "high"
