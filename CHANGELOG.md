@@ -1,5 +1,122 @@
 # 发布日志
 
+## v1.2.0 - 2026-03-08
+
+### 🎯 版本主题
+- **模型升级至 GPT-5.4** - 同步最新模型能力，优化成本与性能平衡
+- **原生记忆功能支持** - 启用 memories 实现跨会话上下文连贯性
+- **适配版本升级** - 全面适配 Codex CLI v0.111.0 新特性
+
+---
+
+### ✨ 核心更新
+
+#### 1️⃣ 模型与推理配置升级
+- **模型升级**：`gpt-5.3-codex` → `gpt-5.4`
+- **推理强度调整**：`xhigh` → `high`
+  - 在 GPT-5.4 上 `high` 已能提供优秀的推理质量
+  - 显著降低 token 成本，提升响应速度
+- **新增规划模式推理强度**：`plan_mode_reasoning_effort = "xhigh"`
+  - 规划阶段使用更高推理强度，避免方向性错误
+
+#### 2️⃣ 原生记忆功能 (Memories)
+- 新增 `[features]` 区块配置：`memories = true`
+- 新增 `[memories]` 配置区块：
+  - `extract_model` - 单对话线程记忆提取模型
+  - `consolidation_model` - 多线程记忆归并/整理模型
+- 支持从对话中自动提取关键信息
+- 跨会话自动归并记忆，提升长期上下文连贯性
+
+#### 3️⃣ 适配版本升级至 v0.111.0
+- 更新 README.md 版本引用（4 处）
+- 更新 CHANGELOG.md 历史版本记录
+- 更新 AGENTS.template.md 版本信息
+- 更新 config.toml.example 配置模板
+
+#### 4️⃣ README 文档完善
+- 新增"启用原生记忆功能"步骤说明
+- 更新最小配置示例，加入 memories 配置
+- 在核心要点中新增原生记忆要点（🧠）
+- 在关键参数速记中补充 memories 说明
+
+#### 5️⃣ 新增配置项
+- `suppress_unstable_features_warning = true` - 抑制开发中功能警告
+- `[tui]` 区块 - 状态栏自定义配置
+  - `status_line` - 可配置显示模型、分支、剩余上下文等信息
+
+---
+
+### 📊 统计数据
+
+**文件变更：**
+- `README.md` - 新增记忆功能指南，更新配置示例
+- `CHANGELOG.md` - 新增 v1.2.0 版本记录
+- `templates/AGENTS.template.md` - 更新版本信息
+- `templates/config.toml.example` - 升级模型配置，新增 memories 配置
+
+---
+
+### 📋 升级指南
+
+#### 从 v1.1.0 升级
+
+1. **拉取最新代码**
+   ```bash
+   git pull origin main
+   ```
+
+2. **更新配置（手动合并关键项）**
+   ```toml
+   # 模型升级
+   model = "gpt-5.4"
+   model_reasoning_effort = "high"
+   
+   # 新增规划模式推理强度
+   plan_mode_reasoning_effort = "xhigh"
+   
+   # 启用原生记忆
+   [features]
+   multi_agent = true
+   memories = true
+   
+   [memories]
+   extract_model = "gpt-5.4"
+   consolidation_model = "gpt-5.4"
+   ```
+
+3. **在 CLI 中启用 Memories**
+   - 进入 `/experimental`
+   - 勾选 `Memories`
+
+4. **验证版本**
+   - 确保 Codex CLI 版本为 `v0.111.0`
+   - 执行 `codex --version` 检查
+
+---
+
+### ⚠️ 注意事项
+
+1. **模型变更** - GPT-5.4 与 GPT-5.3-codex 的响应风格可能略有差异，建议先小范围测试
+2. **成本优化** - `high` 相比 `xhigh` 显著降低成本，但复杂任务可考虑临时提升至 `xhigh`
+3. **记忆功能** - 首次启用可能需要一定时间积累记忆，效果随使用次数提升
+4. **版本依赖** - 基于 Codex CLI `v0.111.0` 验证，低版本可能存在字段差异
+
+---
+
+### 🎓 使用建议
+
+1. **成本敏感场景** - 默认使用 `high`，复杂规划任务临时提升至 `xhigh`
+2. **记忆功能** - 适合需要长期维护的项目，能自动记住代码规范和偏好
+3. **团队项目** - 建议统一配置 `memories` 模型参数，确保记忆提取一致性
+
+---
+
+> 📅 **发布日期**: 2026-03-08  
+> 📌 **版本**: v1.2.0  
+> 🎯 **主题**: 模型升级与原生记忆支持
+
+---
+
 ## v1.1.0 - 2026-03-03
 
 ### 🎯 版本主题
@@ -26,7 +143,7 @@
 - 提供保守模式参考配置（read-only 沙箱、medium 推理强度）
 
 #### 3️⃣ 版本升级
-- 升级适配版本至 **Codex CLI v0.106.0**
+- 升级适配版本至 **Codex CLI v0.111.0**
 - 更新所有文档中的版本引用
 
 #### 4️⃣ 并发控制统一
@@ -46,7 +163,7 @@
 - `3bc82bc` - docs: 优化 AGENTS 文档格式与风格
 - `2d21ed8` - docs: 更新核心要点，补充并发控制说明
 - `6fc90c0` - docs: 统一并行度上限为 5 个
-- `5696e04` - chore: 升级适配版本至 Codex CLI v0.106.0
+- `5696e04` - chore: 升级适配版本至 Codex CLI v0.111.0
 - `b54dcdf` - docs: 完善配置模板注释与结构
 - `cba0758` - docs: 同步 README 配置模板与 example 保持一致
 
@@ -92,7 +209,7 @@
    ```
 
 4. **验证版本**
-   - 确保 Codex CLI 版本为 `v0.106.0`
+   - 确保 Codex CLI 版本为 `v0.111.0`
    - 执行 `codex --version` 检查
 
 ---
@@ -101,7 +218,7 @@
 
 1. **并发限制更保守** - 单轮最大并行子任务从 6 个降为 5 个，更稳定
 2. **配置结构变更** - 新增 `[sandbox_workspace_write]` 和 `[agents]` 区块
-3. **版本依赖** - 基于 Codex CLI `v0.106.0` 验证，低版本可能存在字段差异
+3. **版本依赖** - 基于 Codex CLI `v0.111.0` 验证，低版本可能存在字段差异
 
 ---
 

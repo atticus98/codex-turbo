@@ -5,10 +5,13 @@
 model_provider = "cch"
 
 # 具体使用的模型名称
-model = "gpt-5.3-codex"
+model = "gpt-5.4"
 
-# 推理强度：xhigh 表示更深推理，通常更慢、成本更高，但结果更稳
-model_reasoning_effort = "xhigh"
+# 推理强度：5.4 默认改为high
+model_reasoning_effort = "high"
+
+# 规划模式下的推理轻度： 更好的规划结果避免方向性错误，推荐设置为 xhigh
+plan_mode_reasoning_effort = "xhigh"
 
 # 沙箱模式：workspace-write = 可读全项目、可写工作区（受工作区边界限制）
 sandbox_mode = "workspace-write"
@@ -19,12 +22,17 @@ personality = "pragmatic"
 # 网页搜索模式：live = 允许实时联网检索最新信息
 web_search = "live"
 
-# 禁止存储响应内容（隐私更强，通常不保留会话输出）
+# 禁止存储响应内容
 disable_response_storage = true
+
+# 开发中的功能启用的警告的抑制
+suppress_unstable_features_warning = true
 
 [features]
 # 启用多代理并行能力
 multi_agent = true
+# 启用原生记忆功能
+memories = true
 
 [sandbox_workspace_write]
 # 在 workspace-write 模式下允许网络访问
@@ -37,6 +45,20 @@ max_threads = 5
 # 子代理最大递归深度：1 = 只允许一层，避免“子代理再开子代理”
 max_depth = 1
 
+[memories]
+# 阶段 1：从单个对话线程中提取记忆时使用的模型
+extract_model = "gpt-5.4"
+
+# 阶段 2：将多条线程记忆做归并 / 整理时使用的模型
+consolidation_model = "gpt-5.4"
+
+
 # 可选：如果你要保守一点，可改成：
 # sandbox_mode = "read-only" # 只读沙箱，不允许写文件
 # model_reasoning_effort = "medium"# 推理强度降级，速度/成本更均衡
+
+
+
+[tui]
+# 状态栏设置：模型，分支，剩余上下文
+status_line = ["model-with-reasoning", "git-branch", "context-remaining"]

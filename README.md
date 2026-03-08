@@ -2,11 +2,12 @@
 
 让 Codex CLI 用得更快、更稳、更可复用。
 
-> 当前项目适配版本：**Codex CLI v0.106.0**
+> 当前项目适配版本：**Codex CLI v0.111.0**
 
 核心要点
 
 - 💡 **并行工作流**：`multi_agent = true` 最大并行度与最小阻塞设计
+- 🧠 **原生记忆**：`memories = true` 自动提取和归并对话记忆，提升上下文连贯性
 - 🎯 **对话风格**：强视觉边界、emoji 编号、直而短句的终端输出规范
 - 📝 **标准契约**：子代理任务下发的清晰指令模板（名称/目标/动作/结果）
 - ⚙️ **并发控制**：`max_threads = 5` 保守限制单轮最大子任务数
@@ -46,7 +47,7 @@ cd codex-turbo
 
 ### 2. 准备
 
-- 确保 Codex CLI 版本为 `v0.106.0`（本文档按该版本适配）
+- 确保 Codex CLI 版本为 `v0.111.0`（本文档按该版本适配）
 - 本地有 `~/.codex/` 目录
 
 ### 3. 启用多代理
@@ -65,7 +66,27 @@ multi_agent = true
 
 > 如果没有这段，可以手动补上。
 
-### 4. 放置模板
+### 4. 启用原生记忆功能
+
+在 Codex CLI 内执行：
+
+1. 进入 `/experimental`
+2. 勾选 `Memories`
+
+然后检查 `~/.codex/config.toml` 是否包含：
+
+```toml
+[features]
+memories = true
+
+[memories]
+extract_model = "gpt-5.4"
+consolidation_model = "gpt-5.4"
+```
+
+> 原生记忆功能支持从对话中提取记忆，并在多会话间自动归并，提升上下文连贯性。
+
+### 5. 放置模板
 
 把本仓库模板放到你的用户目录。你可以按场景二选一：
 
@@ -85,7 +106,7 @@ cp templates/config.toml.example ~/.codex/config.toml.template
 
 然后自行对比并合并关键差异（按你习惯用 diff 或编辑器 merge）。
 
-### 5. 最小验证
+### 6. 最小验证
 
 用一个 20~30 分钟的小任务测试：
 
@@ -99,7 +120,7 @@ cp templates/config.toml.example ~/.codex/config.toml.template
 - 输出质量可控，不是“快但乱”
 - token 成本在你的预算范围内
 
-### 6. 推荐迭代节奏
+### 7. 推荐迭代节奏
 
 1. 先抄模板直接跑
 2. 跑完一轮再裁剪规则
@@ -107,14 +128,14 @@ cp templates/config.toml.example ~/.codex/config.toml.template
 
 做到这三步，基本就进入正循环了。
 
-### 7. 推荐最小配置（已合并）
+### 8. 推荐最小配置（已合并）
 
 下面这份 `~/.codex/config.toml` 最小配置，够你先稳定跑起来：
 
 ```toml
 model_provider = "cch"
-model = "gpt-5.3-codex"
-model_reasoning_effort = "xhigh"
+model = "gpt-5.4"
+model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"
 
 personality = "pragmatic"
@@ -123,6 +144,7 @@ disable_response_storage = true
 
 [features]
 multi_agent = true
+memories = true
 
 [sandbox_workspace_write]
 network_access = true
@@ -130,18 +152,23 @@ network_access = true
 [agents]
 max_threads = 5
 max_depth = 1
+
+[memories]
+extract_model = "gpt-5.4"
+consolidation_model = "gpt-5.4"
 ```
 
 关键参数速记：
 
 - `multi_agent = true`：多代理总开关（最重要）
+- `memories = true`：启用原生记忆功能，提升上下文连贯性
 - `model_reasoning_effort`：推理深度，越高通常越贵
 - `sandbox_mode`：建议先用 `workspace-write`，兼顾安全和效率
 - `web_search = "live"`：需要实时信息时更有用
 - `max_threads = 5`：单轮最大并行子任务数（保守限制）
 - `max_depth = 1`：禁止子代理再开子代理，避免递归失控
 
-> 说明：本文档按 Codex CLI `v0.106.0` 适配；不同版本或供应商字段名可能有差异，请以你本地 CLI 支持为准。
+> 说明：本文档按 Codex CLI `v0.111.0` 适配；不同版本或供应商字段名可能有差异，请以你本地 CLI 支持为准。
 
 ## 文档导航
 
@@ -162,4 +189,4 @@ max_depth = 1
 
 ## 免责声明
 
-本仓库是方法论与模板参考，当前按 Codex CLI v0.106.0 验证。
+本仓库是方法论与模板参考，当前按 Codex CLI v0.111.0 验证。
