@@ -16,8 +16,6 @@ sandbox_mode = "workspace-write"
 personality = "pragmatic"
 # 网页搜索模式：live = 允许实时联网检索最新信息
 web_search = "live"
-# 禁止存储响应内容
-disable_response_storage = true
 
 # 🔥抑开发中的功能的警告
 suppress_unstable_features_warning = true

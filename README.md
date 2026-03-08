@@ -150,7 +150,6 @@ sandbox_mode = "workspace-write"
 
 personality = "pragmatic"
 web_search = "live"
-disable_response_storage = true
 
 [features]
 multi_agent = true
