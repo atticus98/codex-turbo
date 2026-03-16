@@ -1,12 +1,13 @@
 # codex-turbo
 
-让 Codex CLI 用得更快、更稳、更可复用。
+抛砖引玉，让 Codex CLI 用得更快、更稳、更可复用。
 
-> 当前项目适配版本：**Codex CLI v0.111.0**
+> 当前项目适配版本：**Codex CLI v0.114.0**
 
-核心要点
+## 核心要点
 
 - 💡 **并行工作流**：`multi_agent = true` 最大并行度与最小阻塞设计
+- 🔧 **系统级契约**：在 `config.toml` 中通过 `developer_instructions` 注入 Agent 并行工作规范，优先级高于 `AGENTS.md`
 - 🧠 **原生记忆**：`memories = true` 自动提取和归并对话记忆，提升上下文连贯性
 - 🔌 **WebSocket 支持**：`responses_websockets_v2 = true` 启用实时流式响应，不支持自动回退
 - 🎯 **对话风格**：强视觉边界、emoji 编号、直而短句的终端输出规范
@@ -48,7 +49,7 @@ cd codex-turbo
 
 ### 2. 准备
 
-- 确保 Codex CLI 版本为 `v0.111.0`（本文档按该版本适配）
+- 确保 Codex CLI 版本为 `v0.114.0`（本文档按该版本适配）
 - 本地有 `~/.codex/` 目录
 
 ### 3. 启用多代理
@@ -179,7 +180,7 @@ consolidation_model = "gpt-5.4"
 - `max_threads = 5`：单轮最大并行子任务数（保守限制）
 - `max_depth = 1`：禁止子代理再开子代理，避免递归失控
 
-> 说明：本文档按 Codex CLI `v0.111.0` 适配；不同版本或供应商字段名可能有差异，请以你本地 CLI 支持为准。
+> 说明：本文档按 Codex CLI `v0.114.0` 适配；不同版本或供应商字段名可能有差异，请以你本地 CLI 支持为准。
 
 ## 文档导航
 
@@ -200,4 +201,4 @@ consolidation_model = "gpt-5.4"
 
 ## 免责声明
 
-本仓库是方法论与模板参考，当前按 Codex CLI v0.111.0 验证。
+本仓库是方法论与模板参考，当前按 Codex CLI v0.114.0 验证。
