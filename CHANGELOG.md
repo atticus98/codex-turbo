@@ -1,5 +1,103 @@
 # 发布日志
 
+## v1.3.0 - 2026-03-16
+
+### 🎯 版本主题
+- **系统级提示词配置** - 将并行工作规范迁移至 `developer_instructions`，优先级高于 `AGENTS.md`
+- **适配版本升级** - 全面适配 Codex CLI v0.114.0
+
+---
+
+### ✨ 核心更新
+
+#### 1️⃣ 系统级提示词迁移（重要变更）
+
+**变更原因**：`developer_instructions` 是 Codex CLI 的系统级配置，优先级高于项目级 `AGENTS.md`，能确保核心契约始终生效。
+
+**删除位置**：`templates/AGENTS.template.md`
+- 移除「Agent 并行工作规范」完整契约章节（约 88 行）
+
+**新增位置**：`templates/config.toml.example`
+- 新增 `developer_instructions` 配置项，包含完整的并行工作规范契约（约 133 行）
+
+**迁移内容**：
+- 主代理与子代理分工细则
+- 子任务智能体契约（代理名称/任务定义/执行动作/禁止事项/预期结果）
+- 并行调度与子任务下发流程
+- 等待策略与防死锁熔断机制
+- 失败处理与接管协商策略
+- 串行回退条件决策表
+
+#### 2️⃣ AGENTS.template.md 重构 v1.4.0
+- 精简为开发原则与输出风格指南
+- 新增 SIMPLE 架构原则，强调代码可读性
+- 细化 ASCII 表格/图示使用规则
+- 更新版本至 v1.4.0
+
+#### 3️⃣ 适配版本升级至 v0.114.0
+- 更新 README.md 版本引用（4 处）
+
+---
+
+### 📊 统计数据
+
+**文件变更：**
+- `templates/config.toml.example` - +133 行（新增 developer_instructions）
+- `templates/AGENTS.template.md` - -88 行（移除并行工作规范），+57 行（重构内容）
+- `README.md` - 更新版本引用（4 处）
+
+---
+
+### 📋 升级指南
+
+#### 从 v1.2.0 升级
+
+1. **拉取最新代码**
+   ```bash
+   git pull origin main
+   ```
+
+2. **更新配置（关键步骤）**
+
+   ⚠️ **必须操作**：将 `developer_instructions` 合并到你的 `~/.codex/config.toml`
+
+   ```bash
+   # 方式一：直接复制（首次使用或无自定义配置）
+   cp templates/config.toml.example ~/.codex/config.toml
+
+   # 方式二：手动合并（已有自定义配置）
+   # 从 templates/config.toml.example 复制 developer_instructions 配置项
+   # 到你的 ~/.codex/config.toml 文件顶部
+   ```
+
+3. **可选操作**：清理 `AGENTS.md` 中的冗余内容
+   - 由于 `developer_instructions` 已包含并行工作规范
+   - 可删除 `~/.codex/AGENTS.md` 中重复的契约内容
+   - 或直接使用新的精简版模板：
+     ```bash
+     cp templates/AGENTS.template.md ~/.codex/AGENTS.md
+     ```
+
+4. **验证版本**
+   - 确保 Codex CLI 版本为 `v0.114.0`
+   - 执行 `codex --version` 检查
+
+---
+
+### ⚠️ 注意事项
+
+1. **优先级说明** - `developer_instructions` > `AGENTS.md`，系统级配置优先于项目级
+2. **配置合并** - 务必将 `developer_instructions` 添加到 `config.toml`，保证尽可能高的遵循度
+3. **版本依赖** - 基于 Codex CLI `v0.114.0` 验证，低版本可能不支持 `developer_instructions` 字段
+
+---
+
+> 📅 **发布日期**: 2026-03-16
+> 📌 **版本**: v1.3.0
+> 🎯 **主题**: 系统级提示词配置与版本升级
+
+---
+
 ## v1.2.0 - 2026-03-08
 
 ### 🎯 版本主题
