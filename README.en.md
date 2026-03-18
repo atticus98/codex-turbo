@@ -42,7 +42,7 @@ multiple agents.
 - 📋 **Reusable Templates**: ready-to-copy `AGENTS.template.en.md` and
   `config.toml.en.example`
 
-## Directory Structure
+## Core Files and Directories
 
 ```text
 .
@@ -63,6 +63,11 @@ multiple agents.
         ├── agents/
         └── skills/
 ```
+
+**Related Docs**
+
+- [FAQ](./docs/faq.en.md)
+- [CHANGELOG](./CHANGELOG.md)
 
 ## Quick Start (5 Minutes)
 

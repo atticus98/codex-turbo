@@ -24,7 +24,7 @@
 - 🤖 **自定义智能体**：手动配置子代理的模型、推理强度、职责描述
 - 📋 **可复制模板**：开箱即用的 `AGENTS.template.md` 与 `config.template.toml`
 
-## 目录结构
+## 核心文件与目录
 
 ```text
 .
@@ -45,6 +45,11 @@
         ├── agents/
         └── skills/
 ```
+
+**相关文档**
+
+- [FAQ](./docs/faq.md)
+- [CHANGELOG](./CHANGELOG.md)
 
 ## 快速上手（5 分钟）
 
