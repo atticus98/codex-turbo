@@ -75,7 +75,7 @@ suppress_unstable_features_warning = true
 multi_agent = true
 # Enable native memories
 memories = true
-# Enable websocket support; not every proxy supports it, and unsupported backends should fall back automatically
+# Enable websocket support; if the current backend service or provider does not support WebSocket, it will automatically fall back to the traditional mode
 responses_websockets_v2 = true
 
 [sandbox_workspace_write]

@@ -16,7 +16,7 @@
 - 💡 **并行工作流**：`multi_agent = true` 最大并行度与最小阻塞设计
 - 🔧 **系统级契约**：在 `config.toml` 中通过 `developer_instructions` 注入 Agent 并行工作规范，优先级高于 `AGENTS.md`
 - 🧠 **原生记忆**：`memories = true` 自动提取和归并对话记忆，提升上下文连贯性
-- 🔌 **WebSocket 支持**：`responses_websockets_v2 = true` 启用实时流式响应，不支持自动回退
+- 🔌 **WebSocket 支持**：`responses_websockets_v2 = true` 启用实时流式响应；如果当前后端服务或提供商不支持 WebSocket，会自动回退到传统模式
 - 🎯 **对话风格**：强视觉边界、emoji 编号、直而短句的终端输出规范
 - 📝 **动态契约**：主代理任务动态下发清晰的指令模板（目标/动作/结果）
 - ⚙️ **并发控制**：`max_threads = n` 自定义单轮最大子任务数

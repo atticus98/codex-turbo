@@ -76,7 +76,7 @@ suppress_unstable_features_warning = true
 multi_agent = true
 # 启用原生记忆功能
 memories = true
-# 启用websocket支持，⚠️ 不是所有的中转站都支持，不支持会自动回退
+# 启用 websocket 支持；如果当前后端服务或提供商不支持 WebSocket，会自动回退到传统模式
 responses_websockets_v2 = true
 
 [sandbox_workspace_write]

@@ -27,7 +27,8 @@ multiple agents.
 - 🧠 **Native Memory**: `memories = true` to extract and consolidate
   conversation memory automatically
 - 🔌 **WebSocket Support**: `responses_websockets_v2 = true` enables realtime
-  streaming responses with no automatic fallback
+  streaming responses. If the current backend service or provider does not
+  support WebSocket, it will automatically fall back to the traditional mode
 - 🎯 **Conversation Style**: strong visual boundaries, emoji markers, and
   short direct terminal-friendly output
 - 📝 **Dynamic Contract**: the main agent dynamically sends clear task
