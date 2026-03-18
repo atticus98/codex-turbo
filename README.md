@@ -4,7 +4,12 @@
 
 本仓库是 Codex CLI 的个人配置模板集，旨在充分利用 CLI 原生能力，实现多智能体自主协调下的并行任务调度。
 
-> 当前项目适配版本：**Codex CLI v0.114.0**
+> 💡 **不知道如何操作？** 可以将以项目地址发送给 AI 助手（如 Claude Code CLI、Codex CLI 等），让其根据你的实际情况协助合并或新建。
+
+> 当前项目适配版本：**Codex CLI v0.115.0**
+>
+> 原帖 [《Codex CLI 多智能体并行调度配置分享》](https://linux.do/t/topic/1603762) 已无法编辑，本项目作为后续维护版本持续迭代。
+
 
 ## 核心要点
 
@@ -14,17 +19,10 @@
 - 🔌 **WebSocket 支持**：`responses_websockets_v2 = true` 启用实时流式响应，不支持自动回退
 - 🎯 **对话风格**：强视觉边界、emoji 编号、直而短句的终端输出规范
 - 📝 **标准契约**：子代理任务下发的清晰指令模板（名称/目标/动作/结果）
-- ⚙️ **并发控制**：`max_threads = 10` 自定义单轮最大子任务数
+- ⚙️ **并发控制**：`max_threads = n` 自定义单轮最大子任务数
 - ⚠️ **风险管控**：危险操作确认机制与不可变原则
+- 🤖 **自定义智能体**：手动配置子代理的模型、推理强度、职责描述
 - 📋 **可复制模板**：开箱即用的 `AGENTS.template.md` 与 `config.template.toml`
-
-## 为什么做这个仓库
-
-原帖信息`https://linux.do/t/topic/1603762`，但偏“长文流”，此次优化为：
-
-- 按主题查阅（上手 / 配置 / FAQ / 模板）
-- 按团队二次定制（模板直接复制改）
-- 持续迭代（PR/Issue 留痕）
 
 ## 目录结构
 
@@ -87,23 +85,104 @@ cp -r templates/cn/agents ~/.codex/
 cp -r templates/cn/skills ~/.codex/
 ```
 
-**已有配置（手动合并）**：查看注释后，对比差异后合并关键配置。
+**已有配置（手动合并）**：
+
+不要直接覆盖现有的 `~/.codex`，建议按下面的步骤合并。
+
+
+> - 你的现有配置：`~/.codex/config.toml`、`~/.codex/AGENTS.md`
+> - 本仓库模板：`templates/cn/config.template.toml`、`templates/cn/AGENTS.template.md`
+
+1. **先备份现有配置**
+
+```bash
+cp ~/.codex/config.toml ~/.codex/config.toml.bak
+cp ~/.codex/AGENTS.md ~/.codex/AGENTS.md.bak
+[ -d ~/.codex/agents ] && cp -R ~/.codex/agents ~/.codex/agents.bak
+[ -d ~/.codex/skills ] && cp -R ~/.codex/skills ~/.codex/skills.bak
+```
+
+> 如果你本地已经存在 `~/.codex/agents.bak` 或 `~/.codex/skills.bak`，请先手动处理旧备份，避免再次执行 `cp -R` 时把目录复制成嵌套结构。
+
+2. **先看差异，再决定怎么合**
+
+```bash
+diff -u ~/.codex/config.toml templates/cn/config.template.toml
+diff -u ~/.codex/AGENTS.md templates/cn/AGENTS.template.md
+```
+
+3. **`config.toml` 至少合并这些关键块**
+
+- `developer_instructions`
+- `[agents.explorer]`
+- `[agents.worker]`
+- `[features]`
+- `[agents]`
+- `[memories]`
+
+4. **同步关联文件（强制检查项），不要只改主配置**
+
+`[agents.explorer]` 和 `[agents.worker]` 中的这两行属于必合并项：
+
+- `config_file = "agents/explorer.toml"`
+- `config_file = "agents/worker.toml"`
+
+因此，下面这些文件也必须同时存在：
+
+```bash
+mkdir -p ~/.codex/agents ~/.codex/skills/terminal-dialog-style
+cp templates/cn/agents/explorer.toml ~/.codex/agents/explorer.toml
+cp templates/cn/agents/worker.toml ~/.codex/agents/worker.toml
+cp templates/cn/skills/terminal-dialog-style/SKILL.md ~/.codex/skills/terminal-dialog-style/SKILL.md
+```
+
+5. **合并完成后，做一次快速自检**
+
+```bash
+rg -n "developer_instructions|\\[agents\\.explorer\\]|\\[agents\\.worker\\]|config_file" ~/.codex/config.toml
+ls -R ~/.codex/agents ~/.codex/skills 2>/dev/null
+```
+
+6. **如果需要回滚，按下面恢复**
+
+先确认这些备份文件或目录存在：
+
+- `~/.codex/config.toml.bak`
+- `~/.codex/AGENTS.md.bak`
+- `~/.codex/agents.bak`
+- `~/.codex/skills.bak`
+
+然后执行：
+
+```bash
+cp ~/.codex/config.toml.bak ~/.codex/config.toml
+cp ~/.codex/AGENTS.md.bak ~/.codex/AGENTS.md
+
+rm -rf ~/.codex/agents
+rm -rf ~/.codex/skills
+
+cp -R ~/.codex/agents.bak ~/.codex/agents
+cp -R ~/.codex/skills.bak ~/.codex/skills
+```
+
+> ⚠️ `rm -rf ~/.codex/agents` 和 `rm -rf ~/.codex/skills` 会直接删除当前目录内容。执行前请先确认 `~/.codex/agents.bak` 与 `~/.codex/skills.bak` 确实存在，且里面是你要恢复的旧配置。
+
+> 不建议直接覆盖你本地已有的供应商配置、API key、MCP 服务配置或其他带环境依赖的字段；模板负责“工作方式”，你本地配置负责“运行环境”。
 
 > ⚠️ **重点**：`config.template.toml` 中的 `developer_instructions` 是系统级契约，优先级高于 `AGENTS.md`，务必确保已合并。
 
 > 说明：本文档按 Codex CLI `v0.115.0` 适配；不同版本或供应商字段名可能有差异，请以你本地 CLI 支持为准。
 
-## 文档导航
-
-- `README.md`：快速上手（本页）
-- `templates/cn/AGENTS.template.md`：开发原则与输出风格模板
-- `templates/cn/config.template.toml`：系统配置模板（含 `developer_instructions`）
-- `templates/cn/agents/`：子代理配置模板
-- `templates/cn/skills/`：技能模板
 
 ## 免责声明
 
-本仓库是方法论与模板参考，当前按 Codex CLI v0.115.0 验证。
-请注意，多智能体并发可能导致Token 消耗上升20%~30%，请根据自身情况合理使用。
+本仓库提供的是配置方法论与模板参考，基于 Codex CLI `v0.115.0` 验证。
 
-⚠️ **风险提示**：LLM 可能产生错误判断，导致合理数据被误删或代码被错误修改。请合理分配权限，建议在可控环境中先行测试，使用本模板所产生的任何后果需自行承担。
+**成本提示**：多智能体并发模式下，Token 消耗可能上升 20%~30%，请根据实际情况合理评估使用。
+
+**风险提示**：LLM 可能产生错误判断，导致数据误删或代码被错误修改。建议：
+- 合理配置沙箱权限与操作确认机制
+- 在可控环境中先行测试
+- 对重要数据做好备份
+
+使用本模板所产生的一切后果由使用者自行承担。
