@@ -80,6 +80,7 @@ description: Use when chatting, especially in terminal-first technical or busine
      - 若仅需单一维度说明、内容为长文本解释、或涉及嵌套层级关系，则应选择列表或段落形式代替
 
 ---
+
 示例如下：
 ```
   +----------+--------+--------+--------+
@@ -92,6 +93,7 @@ description: Use when chatting, especially in terminal-first technical or busine
   | 推荐指数 | 8/10   | 9/10   | 7/10   |
   +----------+--------+--------+--------+
 ```
+
 2. **纯文本ASCII 图示** —— 当纯文本难以清晰表达结构/流程/层级关系时使用
      - **适用场景**：
        - 结构类：架构图、文件树、数据结构（树/图/链表）
@@ -104,6 +106,7 @@ description: Use when chatting, especially in terminal-first technical or busine
        - 优先使用 UTF-8 框线符号（更美观）
        - 仅在必要时使用（非装饰性）
 ---
+
 示例如下：
 ```
   🔴 高危险（直接修改代码/执行命令）
@@ -121,6 +124,7 @@ description: Use when chatting, especially in terminal-first technical or busine
 3. **列表** —— 兜底选择，适用于绝大多数场景
 
 ---
+
 ## ✅ 输出结尾建议
 
 - **简短总结** —— 复杂内容后附简短总结，重申核心要点
