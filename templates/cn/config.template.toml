@@ -24,6 +24,36 @@ developer_instructions = """
 12. 首次向用户输出前，加载 terminal-dialog-style skill 并遵循其沟通规范。
 """
 
+# 模型提供应商标识，这里是 cch
+model_provider = "cch"
+# 主代理/默认的 模型
+model = "gpt-5.4"
+# 推理强度：日常任务 推荐：5.4 默认改为medium，复杂任务推荐high
+model_reasoning_effort = "medium"
+# 规划模式下的推理轻度：更好的规划结果避免方向性错误，推荐设置为 high
+plan_mode_reasoning_effort = "high"
+
+# 沙箱模式：workspace-write = 可读全项目、可写工作区（受工作区边界限制）
+sandbox_mode = "workspace-write"
+# 助手人格风格：pragmatic = 偏务实、直接
+personality = "pragmatic"
+# 网页搜索模式：live = 允许实时联网检索最新信息
+web_search = "live"
+
+# 🔥抑开发中的功能的警告
+suppress_unstable_features_warning = true
+
+[model_providers.cch]
+# 修改为中转站的域名
+base_url = "https://xxx.com/v1"
+name = "cch"
+requires_openai_auth = true
+wire_api = "responses"
+# 开启websocket支持
+supports_websockets = true
+websocket_connect_timeout_ms = 15000
+
+
 # 只读探索型子代理（沙箱限制为 read-only，无法修改项目文件）
 [agents.explorer]
 description = """
@@ -57,25 +87,6 @@ description = """
 config_file = "agents/worker.toml"
 
 
-# 模型提供方（后端路由/供应商标识），这里是 cch
-model_provider = "cch"
-# 具体使用的模型名称
-model = "gpt-5.4"
-# 推理强度：日常任务 推荐：5.4 默认改为medium，复杂任务推荐high
-model_reasoning_effort = "medium"
-# 规划模式下的推理轻度： 更好的规划结果避免方向性错误，推荐设置为 high
-plan_mode_reasoning_effort = "high"
-
-# 沙箱模式：workspace-write = 可读全项目、可写工作区（受工作区边界限制）
-sandbox_mode = "workspace-write"
-# 助手人格风格：pragmatic = 偏务实、直接
-personality = "pragmatic"
-# 网页搜索模式：live = 允许实时联网检索最新信息
-web_search = "live"
-
-# 🔥抑开发中的功能的警告
-suppress_unstable_features_warning = true
-
 [features]
 # 启用多代理并行能力
 multi_agent = true
@@ -83,6 +94,9 @@ multi_agent = true
 memories = true
 # 启用 websocket 支持；如果当前后端服务或提供商不支持 WebSocket，会自动回退到传统模式
 responses_websockets_v2 = true
+# 启用 fast 模式，其实已经默认生效
+fast_mode = true
+
 
 [sandbox_workspace_write]
 # 在 workspace-write 模式下允许网络访问
