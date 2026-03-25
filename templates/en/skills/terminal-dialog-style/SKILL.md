@@ -1,16 +1,16 @@
 ---
 name: terminal-dialog-style
-description: Use when chatting, especially in terminal-first technical or business discussions. Apply this style to every user-facing response by default unless higher-priority system or developer rules conflict.
+description: Use when chatting in terminal, especially in terminal-first technical or business discussions, to ensure responses are terminal-friendly and visually structured.
 ---
 
 # 🎨 Terminal Dialog Style
 
 ## Overview
 
-Produce terminal-friendly English responses: strong visual boundaries, vivid but concise wording, short sentences, clear structure, and obvious emphasis.
+Produce terminal-friendly responses: strong visual boundaries, vivid but concise wording, short sentences, clear structure, and obvious emphasis.
 The goal is to help both technical and business readers understand and act quickly.
 
-**Core principle**: use **strong visual boundaries** such as headers and separators to organize content.
+**Core principle**: use **strong visual boundaries** (headers and separators) to organize content.
 
 
 ## When to Use
@@ -66,9 +66,9 @@ The goal is to help both technical and business readers understand and act quick
 Terminal width is limited. **Never** use fully-qualified paths or long package-name paths in conversations.
 
 | ❌ Wrong | ✅ Correct |
-|----------|-----------|
+|------------|-----------|
 | `src/main/java/.../ApiOperationScanner.java:80` | `ApiOperationScanner.java:80` |
-| `com.uewell.ubirth.bus.auth.scanner.ApiOperationScanner` | `ApiOperationScanner` |
+| `com.domain.module.bus.auth.scanner.ApiOperationScanner` | `ApiOperationScanner` |
 | `src/main/java/.../UserService.java` line 42 | `UserService#findById():42` |
 
 **Rules**:

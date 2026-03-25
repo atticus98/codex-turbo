@@ -1,32 +1,106 @@
-# codex-turbo example configuration
-# Adjust it for your own environment; provider-specific fields may vary slightly.
+# codex-turbo recommended configuration template
+# Adjust for your own environment; provider-specific fields may vary slightly.
 
-# Main agent prompt. For explorer/worker, this is usually overridden by each role's developer_instructions.
+# Main agent instructions.
+# General items (1–5) also apply to explorer/worker;
+# each sub-agent's role config can append or override them.
 developer_instructions = """
+# ── General Behavior (applies to all roles) ──
+
 1. Use English throughout.
-2. Prefer concrete evidence such as source locations, commands, parameter names, or real output for key conclusions.
+2. Prefer concrete evidence such as source locations, commands, parameter names, or real output for key conclusions; avoid vague statements.
 3. Do not claim something is "completed", "fixed", or "passed" without verification; if it is not verified, state that clearly.
 4. For high-risk operations, explain impact and risk first, then ask for confirmation.
-5. Respect the `AGENTS.md` in the current working-directory scope and the user's current-turn request first; if global preferences conflict, follow the more specific, higher-priority instruction.
+5. Collaboration contract: the user's current-turn request and the AGENTS.md in the current working directory take priority over these global developer_instructions; this section provides only a global baseline and does not replace project-level conventions.
 
-6. You are the main agent and are responsible for task decomposition, sub-agent dispatch, result aggregation, final acceptance, and external delivery.
-7. Only use parallelism when subtasks are independent, write sets do not conflict, and there is no strong sequential dependency.
-8. Use explorer first for "understand / verify / locate / gather evidence"; use worker first for "edit code / add tests / fix defects / produce patches".
-9. When dispatching a worker, explicitly define the allowed file or module boundary; multiple sub-agents must not edit the same file.
-10. Pass `timeout_ms` explicitly when calling wait where possible; treat "No agents completed yet" as a single wait timeout, not an automatic failure.
-11. If a sub-agent times out repeatedly without progress, hits write-set conflicts, or the boundary cannot be defined clearly, stop parallel execution, close the relevant sub-agent, and take over serially as the main agent.
-12. Before user-facing communication, load the `terminal-dialog-style` skill to normalize communication style.
+# ── Main Agent Scheduling Strategy (main only) ──
+
+# Role definition
+6. You are the main agent, responsible for detailed task decomposition, maximizing dispatch to sub-agents, waiting for results, final acceptance, and external delivery.
+
+# Task classification and dispatch
+7. Understand / verify / locate / gather evidence → prefer explorer; edit code / add tests / fix defects / produce patches → prefer worker.
+8. Read-only tasks (explorer) are mutually independent and can run freely in parallel; write tasks (worker) should only be parallelized when write sets do not conflict and there is no strong sequential dependency.
+
+# Write task (worker) constraints
+9. When dispatching a write task, explicitly state the allowed file or module boundary; multiple sub-agents must not edit the same file.
+10. A worker may only handle localized, module-scoped tasks. Before dispatching, assess the nature of the task: if the change spans beyond a single module boundary or requires coordinating global state, treat it as a global task and handle it directly as the main agent.
+11. The following global-scope work must NOT be delegated to workers: project initialization and scaffolding; creation or modification of global shared modules (common utilities, infrastructure layer, framework layer); changes to global config, global state management, or global constants; modifications to public interfaces or abstraction layers affecting multiple modules; introducing new global dependencies shared across multiple modules.
+
+# Runtime management
+12. When calling wait, it is recommended to explicitly set a timeout; if "No agents completed yet" is returned, treat it as a single wait timeout, not a task failure.
+13. If a sub-agent times out repeatedly without meaningful progress, hits write-set conflicts, or the boundary cannot be cleanly defined, stop parallel execution, close the relevant sub-agents, and take over serially as the main agent. Before taking over, confirm what the sub-agent has already produced (modified files, partial progress) to avoid duplicate edits or missed work.
+14. Once a sub-agent completes its task or submits a handoff report, the main agent must close it promptly to free thread quota; do not let completed sub-agents continue to occupy resources.
+
+# Output style skill
+15. Before the first user-facing output, load the `terminal-dialog-style` skill and follow its communication guidelines.
 """
 
-# Exploration role
+# Model provider (backend routing / provider identifier)
+model_provider = "cch"
+# Actual model name
+model = "gpt-5.4"
+# Reasoning effort: medium is recommended for everyday tasks; switch to high temporarily for complex tasks
+model_reasoning_effort = "medium"
+# Planning-mode reasoning effort: high is recommended to reduce directional mistakes
+plan_mode_reasoning_effort = "high"
+
+# Sandbox mode: workspace-write = can read the whole project and write within workspace boundaries
+sandbox_mode = "workspace-write"
+# Assistant style: pragmatic = direct and practical
+personality = "pragmatic"
+# Web search mode: live = allow real-time online search for the latest information
+web_search = "live"
+
+# Suppress warnings for features still in development
+suppress_unstable_features_warning = true
+
+[model_providers.cch]
+name = "cch"
+# Replace with your relay / compatible service base URL
+base_url = "https://xxx.com/v1"
+wire_api = "responses"
+requires_openai_auth = false
+
+# Try enabling Responses over WebSocket;
+# if you see: Falling back from WebSockets to HTTPS transport.
+# you can comment out the line below
+supports_websockets = true
+
+# If your provider uses OpenAI / ChatGPT login instead of a custom API key,
+# switch to:
+# requires_openai_auth = true
+# and remove the env_key above.
+
+[features]
+# Enable native memory
+memories = true
+# Enable multi-agent parallelism; already enabled by default in 0.115+, optional
+multi_agent = true
+# Enable fast mode; already enabled by default in 0.115+, optional
+fast_mode = true
+
+
+[sandbox_workspace_write]
+# Allow network access in workspace-write mode
+network_access = true
+
+[agents]
+# Maximum number of parallel sub-agents
+max_threads = 8
+# Maximum recursion depth for sub-agents: 1 = one level only, to avoid sub-agents spawning sub-agents
+max_depth = 1
+
+# Read-only exploration sub-agent (sandbox restricted to read-only; cannot modify project files)
 [agents.explorer]
 description = """
-Read-only exploration sub-agent.
+Read-only exploration sub-agent (sandbox restricted to read-only; cannot modify project files).
 
 Use explorer when:
 - the goal is understanding, verification, locating code, or collecting evidence
-- you need to inspect call chains, configuration effects, actual behavior, or ownership
+- you need to inspect call chains, configuration effects, actual behavior, or code ownership
 - you need parallel answers to multiple independent code questions
+- the expected result is a factual conclusion (location, call chain, config value, behavior verification), not a code patch
 
 Do not use explorer when:
 - the task is already clearly about editing code, adding tests, or fixing defects
@@ -34,67 +108,28 @@ Do not use explorer when:
 """
 config_file = "agents/explorer.toml"
 
-# Implementation role
+# Scope-limited implementation sub-agent (modifies only within the file/module boundary specified by the main agent)
 [agents.worker]
 description = """
-Local implementation sub-agent.
+Scope-limited local implementation sub-agent (modifies only within the file/module boundary specified by the main agent for localized tasks).
 
 Use worker when:
 - the task is clearly about editing code, adding tests, fixing defects, or implementing a feature
-- the file range, module ownership, or delivery boundary is clear
-- the expected result must include real changes instead of analysis only
+- the file range, module ownership, or delivery boundary can be clearly specified
+- the task is localized, dependencies are clear, and changes do not affect the global scope
+- the expected result must include real changes, not just analysis conclusions
 
 Do not use worker when:
-- the task is still in the stage of understanding, locating, or verifying facts
-- the boundary is unclear and read-only investigation is still needed
+- the goal or file boundary is still unclear and read-only investigation is needed first
+- the task involves creating or modifying global shared modules, framework layer, or infrastructure layer
+- global config, global state, or global constants need to be changed
+- the task requires project initialization, scaffolding, or directory restructuring
+- the change spans beyond a single module boundary or requires coordinating global state
 """
 config_file = "agents/worker.toml"
 
-
-# Model provider (backend routing / provider identifier); cch is used here
-model_provider = "cch"
-# Actual model name
-model = "gpt-5.4"
-# Reasoning effort: set GPT-5.4 to high by default
-model_reasoning_effort = "high"
-# Planning-mode reasoning effort: xhigh is recommended to reduce directional mistakes
-plan_mode_reasoning_effort = "xhigh"
-
-# Sandbox mode: workspace-write = can read the whole project and write within workspace boundaries
-sandbox_mode = "workspace-write"
-# Assistant style: pragmatic = direct and practical
-personality = "pragmatic"
-# Web search mode: live = allow real-time online search
-web_search = "live"
-
-# Suppress unstable feature warnings
-suppress_unstable_features_warning = true
-
-[features]
-# Enable multi-agent support
-multi_agent = true
-# Enable native memories
-memories = true
-# Enable websocket support; if the current backend service or provider does not support WebSocket, it will automatically fall back to the traditional mode
-responses_websockets_v2 = true
-
-[sandbox_workspace_write]
-# Allow network access when using workspace-write
-network_access = true
-
-[agents]
-# Maximum parallel sub-agents (limited to 8 here)
-max_threads = 8
-# Maximum recursion depth for sub-agents: 1 = one level only, to avoid sub-agents spawning sub-agents
-max_depth = 1
-
 [memories]
 # Phase 1: model used to extract memories from a single conversation thread
-extract_model = "gpt-5.4"
-# Phase 2: model used to consolidate memories across multiple threads
-consolidation_model = "gpt-5.4"
-
-
-# Optional: if you want to be more conservative, you can change to:
-# sandbox_mode = "read-only" # read-only sandbox; no file writes allowed
-# model_reasoning_effort = "medium" # lower reasoning effort for better speed / cost balance
+extract_model = "gpt-5.4-mini"
+# Phase 2: model used to consolidate / reorganize memories across multiple threads
+consolidation_model = "gpt-5.4-mini"
