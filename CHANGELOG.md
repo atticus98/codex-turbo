@@ -1,5 +1,189 @@
 # 发布日志
 
+## v1.5.0 - 2026-03-25
+
+### 🎯 版本主题
+- **配置模板持续打磨** - 中文配置模板重排结构并同步到 Codex CLI v0.116.0
+- **子代理边界收紧** - 强化 worker 只处理局部任务的契约，补齐运行时管理规则
+- **终端输出体验回修** - 修复 terminal-dialog-style 的视觉退步并补齐双语同步
+- **文档入口收口** - FAQ 并入 README，手动合并流程独立成专项文档
+
+---
+
+### ✨ 核心更新
+
+#### 1️⃣ 模型与推理强度策略调整（重要变更）
+
+**变更内容**：本次调整了主代理与子代理的默认模型策略，目标是在通用任务场景下取得更好的速度、响应效率与调度体验平衡。
+
+**具体调整**：
+- 主代理默认模型保持为 `gpt-5.4`，默认 `model_reasoning_effort` 调整为 `medium`
+- `explorer` 子代理默认模型调整为 `gpt-5.4-mini`，`model_reasoning_effort = "medium"`
+- `worker` 子代理默认模型调整为 `gpt-5.4-mini`，`model_reasoning_effort = "high"`
+
+**调整思路**：
+这次调整本质上是在“性能”与“强推理”之间重新设定默认平衡点。对于大多数通用业务任务，并不需要在起始阶段就使用更重的模型或更高的思考强度；将默认档位落到更均衡的位置，通常可以改善 Codex 的响应速度、任务切换效率以及多代理协作时的整体吞吐表现。
+
+**使用建议**：
+- 日常业务开发、常规排查、普通文档整理等通用场景，当前默认配置通常已经足够
+- 涉及复杂推理、跨模块重构、长链路分析等高强度任务时，仍建议按任务复杂度主动上调模型规格或推理强度
+
+**涉及文件**：
+- `templates/cn/config.template.toml`
+- `templates/cn/agents/explorer.toml`
+- `templates/cn/agents/worker.toml`
+- `templates/en/config.toml.en.example`
+- `templates/en/agents/explorer.toml`
+- `templates/en/agents/worker.toml`
+
+#### 2️⃣ 配置模板升级到 v0.116.0（重要变更）
+
+**变更原因**：最近两天的改动主要围绕 `templates/cn/config.template.toml` 展开，目标是把配置模板整理成更清晰的层级，同时跟进 Codex CLI v0.116.0 的最新口径。
+
+**核心调整**：
+- 重排顶层配置顺序，统一为「全局配置 → 功能开关 → 代理定义」
+- `[features]` 新增 `fast_mode = true`
+- `[model_providers.cch]` 增加 `env_key = "CCH_API_KEY"`，默认走环境变量管理密钥
+- 精简 `model_provider`、`reasoning_effort`、`suppress_unstable_features_warning` 等注释
+- 将 `developer_instructions` 中的主代理调度策略重新分组，便于后续维护
+- 同步模板版本到 Codex CLI `v0.116.0`
+
+**受影响文件**：
+- `templates/cn/config.template.toml`
+- `templates/en/config.toml.en.example`
+
+#### 3️⃣ worker 局部任务边界强化
+
+**变更内容**：围绕主代理调度与子代理职责，补了一轮更明确的边界约束。
+
+**新增/强化规则**：
+- worker 仅处理局部、模块级实现任务
+- 明确 5 类不得下发给 worker 的全局性工作
+- 新增「完成后及时关闭子代理」约束，避免长期占用线程配额
+- 子代理中途受阻时，要求输出结构化交接信息，便于主代理接管
+- 中英文模板与 agent 配置同步收口，避免中英文契约漂移
+
+**涉及文件**：
+- `templates/cn/config.template.toml`
+- `templates/cn/agents/worker.toml`
+- `templates/cn/agents/explorer.toml`
+- `templates/en/config.toml.en.example`
+- `templates/en/agents/explorer.toml`
+- `templates/en/agents/worker.toml`
+
+#### 4️⃣ terminal-dialog-style Skill 体验修复
+
+**变更内容**：修复前一版终端输出风格 Skill 的多项体验退步，并同步双语版本。
+
+**修复点**：
+- 恢复 emoji 点缀与视觉引导
+- 将路径引用规范提升为独立的必须规则，并补充正反例
+- 明确 TL;DR 必须使用 `>` 引用块包裹
+- 恢复 ASCII 表格与图示 few-shot 示例，解决「规范存在但不容易触发」的问题
+- 英文版同步更新 frontmatter 与文案细节
+
+**涉及文件**：
+- `templates/cn/skills/terminal-dialog-style/SKILL.md`
+- `templates/en/skills/terminal-dialog-style/SKILL.md`
+
+#### 5️⃣ README / FAQ / 手动合并文档收口
+
+**变更内容**：将零散 FAQ 并回主 README，把手动配置合并步骤抽成独立文档。
+
+**结构调整**：
+- `docs/faq.md` / `docs/faq.en.md` 删除
+- FAQ 内容迁移到 `README.md` / `README.en.md`
+- 新增 `docs/manual-merge.md` / `docs/manual-merge.en.md`
+
+**收益**：
+- README 成为单一入口，减少跳转
+- 手动合并流程有独立文档承载，适合直接链接给使用者
+
+#### 6️⃣ 模板与仓库卫生补充
+
+- 中文 AGENTS 模板重写主代理指令表述，强化 Skills 优先与 KISS / YAGNI 原则
+- 中英文子代理模板统一到最新模型与沙箱口径
+- `.gitignore` 补充忽略 macOS `.DS_Store`
+
+---
+
+### 📊 统计数据
+
+**本次发布包含 11 个提交：**
+- `bc7181a` - chore: 补充 .gitignore 忽略 macOS .DS_Store 文件
+- `059f6d3` - docs(template): 重构主代理指令与模板文档，提升表述精确性
+- `3a75211` - feat(agents): 调整子代理配置与终端对话风格规范
+- `ca59305` - refactor(config): 重排配置项顺序，新增 fast_mode
+- `fcead6e` - docs(config): 全面优化配置模板可读性与结构
+- `1b42e36` - refactor(cn): 重构调度策略分组，强化 worker 局部任务边界约束
+- `c3416c8` - fix(skills): 修复 terminal-dialog-style 的多项体验退步
+- `a333c17` - chore(templates/en): sync en templates to match latest cn version
+- `53d1a24` - chore(templates): tune sub-agent model and sandbox settings
+- `e5c90c0` - docs: migrate FAQ into README and extract manual merge guide
+- `a206f89` - chore: sync config template to v0.116.0
+
+**文件变更：**
+- 涉及 17 个唯一文件
+- 总计约 `+804 / -644`，净增约 `160` 行
+- 新增 2 个手动合并文档
+- 删除 2 个 FAQ 文档
+- 持续修改中英双语模板、README 与子代理配置
+
+---
+
+### 📋 升级指南
+
+#### 从 v1.4.0 升级
+
+1. **拉取最新代码**
+   ```bash
+   git pull origin main
+   ```
+
+2. **合并最新配置模板（关键步骤）**
+
+   **建议重点检查以下字段**：
+   - `templates/cn/config.template.toml` 中新增/调整的 `fast_mode`
+   - `[model_providers.cch]` 中的 `env_key = "CCH_API_KEY"`
+   - `developer_instructions` 里新增的 worker 边界、子代理关闭规则
+   - `templates/cn/agents/*.toml` 与 `templates/en/agents/*.toml` 中的模型、推理强度、沙箱配置
+
+   **已有自定义配置时，建议先对比差异**：
+   ```bash
+   diff -u templates/cn/config.template.toml ~/.codex/config.toml
+   diff -u templates/cn/agents/worker.toml ~/.codex/agents/worker.toml
+   diff -u templates/cn/agents/explorer.toml ~/.codex/agents/explorer.toml
+   ```
+
+3. **同步 README 与手动合并文档**
+   - FAQ 不再单独维护
+   - 若你以前引用 `docs/faq.md`，请改为 `README.md` 或 `docs/manual-merge.md`
+   - 英文场景对应使用 `README.en.md` 与 `docs/manual-merge.en.md`
+
+4. **验证版本与关键目录**
+   ```bash
+   codex --version
+   ls -la docs/manual-merge.md docs/manual-merge.en.md
+   ls -la templates/cn/agents templates/en/agents
+   ```
+
+---
+
+### ⚠️ 注意事项
+
+1. **配置模板有顺序调整** - 手动合并时不要只看行 diff，要按区块语义合并
+2. **FAQ 文档已移除** - 外部引用旧路径会失效
+3. **子代理契约更严格** - 旧自定义 worker 若仍承担全局任务，建议重新审查边界
+4. **终端输出 Skill 已更新** - 若你本地已复制旧版 `terminal-dialog-style`，建议重新覆盖同步
+
+---
+
+> 📅 **发布日期**: 2026-03-25
+> 📌 **版本**: v1.5.0
+> 🎯 **主题**: 配置模板打磨、子代理边界收紧与文档入口收口
+
+---
+
 ## v1.4.0 - 2026-03-18
 
 ### 🎯 版本主题
