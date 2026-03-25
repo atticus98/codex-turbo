@@ -70,7 +70,6 @@ supports_websockets = true
 # 如果你的提供商不是自定义 API key，而是复用 OpenAI / ChatGPT 登录，
 # 则改成：
 # requires_openai_auth = true
-# 并删除上面的 env_key。
 
 [features]
 # 启用原生记忆功能

@@ -70,7 +70,6 @@ supports_websockets = true
 # If your provider uses OpenAI / ChatGPT login instead of a custom API key,
 # switch to:
 # requires_openai_auth = true
-# and remove the env_key above.
 
 [features]
 # Enable native memory
