@@ -47,11 +47,63 @@ description: Use when chatting in terminal, especially in terminal-first technic
 
 > 📌 **TL;DR 规范**：对于较长的说明内容，**必须**在开头提供 TL;DR 摘要，让读者在 3 秒内抓住核心价值。
 > TL;DR **必须**使用 `>` 引用块包裹，搭配 📌 或 🎯 图标，与正文形成视觉分离。
+> **TL;DR 引用块结束后，必须空一行再接正文**，确保摘要与正文之间有明确的视觉间隔。
 >
 > 格式示例：
 > ```
-> > 🎯 **TL;DR**：核心问题是 xxx，建议采用 yyy 方案。
+> > 🎯 **TL;DR**
+> > 核心问题是 xxx，建议采用 yyy 方案。
+>
+> （空一行后才是正文）
+>
+> 下面是正文的详细展开……
 > ```
+
+
+## 📍 路径引用规范（强制，不可违反）
+
+> ⚠️ **本节为硬性约束**。在终端对话中，任何包含目录前缀（如 `src/`、`com/`、`main/java/`）的路径都是违规输出。
+> 无论路径出现在行内、列表项、还是独占一行，都**必须**缩写为短名称。
+
+**允许的格式（三种且仅有三种）**：
+
+| 格式 | 用途 | 示例 |
+|------|------|------|
+| `FileName.ext:L行号` | 一般引用 | `TrainCourseManager.kt:L335` |
+| `FileName.ext:L起-止` | 行范围引用 | `TrainCourseManager.kt:L335-356` |
+| `File#method():L行号` | 方法级定位 | `TrainCourseManager#calcCurProgress():L362` |
+
+**禁止的格式（务必避免）**：
+
+```
+❌ src/main/java/com/mxwis/puait/bus/train/manager/TrainCourseManager.kt:335-356
+❌ com.mxwis.puait.bus.train.manager.TrainCourseManager
+❌ - src/main/java/.../UserService.java 第 42 行
+```
+
+**正反面完整对比**：
+
+| ❌ 违规 | ✅ 正确 |
+|--------|--------|
+| `src/main/java/.../ApiOperationScanner.java:80` | `ApiOperationScanner.java:L80` |
+| `com.domain.module.bus.auth.scanner.ApiOperationScanner` | `ApiOperationScanner` |
+| `- src/main/java/.../UserService.java:42-60` | `UserService.java:L42-60` |
+| 列表：`- src/.../TrainCourseManager.kt:335-356` | 列表：`- TrainCourseManager.kt:L335-356` |
+
+**当需要在对话中定位源码时，推荐使用以下模板**：
+
+```
+查询视频记录：
+  - TrainCourseManager#getVideoRecord():L335-356
+进度封顶 99% 的逻辑：
+  - TrainCourseManager#calcCurProgress():L362-370
+```
+
+> 📌 **规则总结**：
+> - 只用文件名，**绝不**带目录前缀
+> - 行号使用 `L` 前缀（`L42`、`L335-356`），避免单独裸数字引起歧义
+> - 类名只用短名：`UserCore` 而非 `com.xxx.UserCore`
+> - 独占一行的路径引用同样必须遵守缩写规则，无例外
 
 
 ## 🎯 视觉与排版优化
@@ -60,21 +112,6 @@ description: Use when chatting in terminal, especially in terminal-first technic
 - 🫧 **适当留白** —— 合理使用空行，避免信息拥挤
 - 🔦 **重点突出** —— 关键信息用 `*斜体*` 强调
 - 📎 **引用分层** —— 灵活使用 `>` 语法为辅助信息创建"视觉画框"。遇到**提示 (💡)、警告 (⚠️)、核心摘要 (📌) 或旁注补充 (📝)** 时，务必使用 `>` 将其与正文剥离，增强醒目度
-
-### ⚠️ 路径引用规范（必须遵守）
-
-终端宽度有限，**禁止**在对话中使用全限定路径或包含包名的长路径。
-
-| ❌ 错误示范 | ✅ 正确示范 |
-|------------|-----------|
-| `src/main/java/.../ApiOperationScanner.java:80` | `ApiOperationScanner.java:80` |
-| `com.domain.module.bus.auth.scanner.ApiOperationScanner` | `ApiOperationScanner` |
-| `src/main/java/.../UserService.java` 第 42 行 | `UserService#findById():42` |
-
-**规则**：
-- 🔹 一般引用 —— 只用文件名：`ApiOperationScanner.java:80`
-- 🔹 需要定位方法时 —— 用 `file#method():line` 格式：`UserService#findById():42`
-- 🔹 类名引用 —— 只用短类名：`UserCore` 而非 `com.xxx.module.UserCore`
 
 
 ## 🧩 代码与数据展示
@@ -148,7 +185,7 @@ description: Use when chatting in terminal, especially in terminal-first technic
 |--------|------|
 | 🚫 对话中使用 `##` 标题语法 | 终端对话应使用粗体分组，`##` 标题视觉层级过重，破坏对话流的扁平感 |
 | 🚫 终端中使用超宽表格 | 内容冗长、含代码或需连贯叙述时，表格会导致灾难性换行 |
-| 🚫 滥用超长绝对路径 | 终端宽度有限，应优先用短文件名或 `file#method():line` 格式 |
+| 🚫 路径包含目录前缀 | **硬性违规**。无论行内还是列表项，必须只用文件名（参见「📍 路径引用规范」）|
 | 🚫 大段纯文本堆砌 | 缺乏视觉锚点，读者无法快速定位信息 |
 | 🚫 装饰性 ASCII 图示 | 图示应服务于理解，不应仅为美观而添加 |
 | 🚫 遗漏 TL;DR | 长内容开头不加 `>` 引用块摘要，读者需全文阅读才能抓住重点 |
