@@ -2,9 +2,7 @@
 
 English | [简体中文](./README.md)
 
-This repository is a personal Codex CLI configuration template set. It aims to
-fully leverage native CLI capabilities and support parallel task orchestration
-under autonomous multi-agent coordination.
+This repository is a set of personal Codex CLI configuration templates. Adhering to the principle of **"Lightweight & Efficient,"** it aims to deeply leverage **native CLI capabilities** without introducing complex dependencies, enabling high-performance task orchestration through multi-agent collaboration. This setup is shared as a personal practice and is intended as a **starting point** to help you build your own ideal AI workflow.
 
 > 💡 **Not sure how to apply it?** You can send this repository URL to an AI
 > assistant such as Claude Code CLI or Codex CLI and let it help merge the
