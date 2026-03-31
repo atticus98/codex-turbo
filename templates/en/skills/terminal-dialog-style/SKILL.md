@@ -189,8 +189,6 @@ Example:
 ## ✅ Suggested Ending Style
 
 - 📝 **Brief Summary** — Attach a short summary after complex content to reiterate core points.
-- 👉 **Next-Step Guidance** — End with practical advice, action plans, or encouragement for further questions.
-
 
 ## ❌ Common Mistakes
 

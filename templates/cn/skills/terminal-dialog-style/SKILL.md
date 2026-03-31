@@ -189,7 +189,6 @@ description: Use when chatting in terminal, especially in terminal-first technic
 ## ✅ 输出结尾建议
 
 - 📝 **简短总结** —— 复杂内容后附简短总结，重申核心要点
-- 👉 **引导下一步** —— 结尾给出实用建议、行动指南或鼓励进一步提问
 
 
 ## ❌ Common Mistakes
