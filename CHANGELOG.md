@@ -1,5 +1,98 @@
 # 发布日志
 
+## v1.6.0 - 2026-04-14
+
+### 🎯 版本主题
+- **终端对话 Skill 深度优化** - 确立源码定位三层策略，严格路径缩写规范，同步中英双语
+- **响应契约与引导优化** - 精简响应引导逻辑，强化响应一致性
+- **文档品牌化提升** - 润色 README 简介，确立「轻量高效」原则
+
+---
+
+### ✨ 核心更新
+
+#### 1️⃣ 终端对话 Skill (terminal-dialog-style) 深度迭代
+
+**变更内容**：本次更新是对终端输出体验的一次重大重构，旨在彻底解决终端环境下长路径溢出、代码证据缺失以及机械化引导等问题。
+
+**主要调整**：
+- **确立源码定位三层策略**：建立「直接贴代码（≤10行） > 节选核心 > 极简引用」的严格降序策略。强调“代码即证据”，严禁仅用文字转述代码逻辑而不贴出原文。
+- **强制路径缩写规范**：将「严禁带目录前缀的长路径」提升为绝对禁令。无论上下文路径多长，输出时必须强制缩写为文件名短名（如 `UserService.kt:L35`），确保终端完美对齐。
+- **移除「引导下一步」规范**：取消了对话末尾强制性的“下一步建议”，改为按需引导，避免 AI 产生机械化、敷衍的对话结尾。
+- **细化视觉排版**：明确 TL;DR 摘要与其后的正文之间必须保留一个空行；重构了所有中英文示例，增加了更复杂的流程解析图示。
+
+**涉及文件**：
+- `templates/cn/skills/terminal-dialog-style/SKILL.md`
+- `templates/en/skills/terminal-dialog-style/SKILL.md`
+
+#### 2️⃣ 开发原则与配置模板同步
+
+- **优化响应引导逻辑**：对 `AGENTS.template.md` 进行了精简，明确仅在咨询类问答结束时给出建议，保持开发过程中的高效直观。
+- **双语同步增强**：同步了 English AGENTS 模板与 V3.2 协议口径，并对 English worker agent 的指令描述进行了对齐。
+
+**涉及文件**：
+- `templates/cn/AGENTS.template.md`
+- `templates/en/AGENTS.template.en.md`
+- `templates/en/agents/worker.toml`
+
+#### 3️⃣ README 体验与品牌润色
+
+- **确立“轻量高效”品牌定位**：润色了 README 的简介部分，强调在不引入复杂依赖的前提下挖掘 CLI 原生能力。
+- **排版优化**：对 README 的核心要点和简介部分的文本进行了排版优化，提升视觉呼吸感。
+
+---
+
+### 📊 统计数据
+
+**本次发布主要包含以下提交记录：**
+- `b46c737` - docs(skill): update terminal-dialog-style with new examples and synchronize English translation
+- `5fcc374` - docs(skill): 强化 terminal-dialog-style 的源码定位三层策略与代码证据规范
+- `f3415ef` - feat(skill): 从 terminal-dialog-style 中移除「引导下一步」规范
+- `e90314f` - docs(cn): 优化 AGENTS.template.md 响应规范与响应引导逻辑
+- `ad66941` - docs: sync English AGENTS template with V3.2 protocol and refine README
+- `db8a0d6` - docs: sync english worker agent instructions with chinese version
+- `da3504f` - docs: 润色 README 简介部分，增强表达力并强调轻量高效原则
+- `b8b5e85` - docs: 优化 README.md 文本排版
+- `f0ce797` - docs: sync english terminal-dialog-style skill with chinese version
+- `1fd24d7` - docs(skill): 强化终端对话中 ASCII 表格的使用规范并硬性禁止 Markdown 表格
+
+---
+
+### 📋 升级指南
+
+#### 从 v1.5.x 升级
+
+1. **拉取最新代码**
+   ```bash
+   git pull origin main
+   ```
+
+2. **覆盖 Skill 文件（核心推荐）**
+   由于 `terminal-dialog-style` 逻辑变动较大，建议直接覆盖：
+   ```bash
+   cp -r templates/cn/skills/terminal-dialog-style ~/.codex/skills/
+   ```
+
+3. **同步 AGENTS 模板**
+   ```bash
+   cp templates/cn/AGENTS.template.md ~/.codex/AGENTS.md
+   ```
+
+---
+
+### ⚠️ 注意事项
+
+1. **源码定位策略强制化** - 新版 Skill 会更频繁地直接展示代码，若需节省 Token，请在特定对话中手动干预。
+2. **路径缩写是硬性约束** - 若观测到子代理仍输出长路径，请检查 Skill 是否已正确加载。
+
+---
+
+> 📅 **发布日期**: 2026-04-14
+> 📌 **版本**: v1.6.0
+> 🎯 **主题**: 终端对话 Skill 深度优化与响应一致性增强
+
+---
+
 ## v1.5.1 - 2026-03-27
 
 ### 🎯 版本主题
