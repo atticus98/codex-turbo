@@ -27,8 +27,10 @@ This repository is a set of personal Codex CLI configuration templates. Adhering
 - 🧩 **Model Selection**: model and reasoning depth can be adjusted to fit your
   actual project requirements — the current template is a reference starting
   point for general development
-- 🎯 **Conversation Style**: strong visual boundaries, emoji markers, and
-  short direct terminal-friendly output
+- 🎯 **Interaction Style**: Solves the "terminal reading disaster" of native Codex
+  (cramped text, long sentences, and path clutter) by aligning with the `Claude Code`
+  style. Features **forced line breaks, visual anchors, and concise brevity** to turn
+  chaotic logs into structured, vivid dialog.
 - 📝 **Dynamic Contract**: the main agent dynamically sends clear task
   instructions with goal/action/result structure
 - ⚙️ **Concurrency Control**: `max_threads = n` for custom per-round parallel
