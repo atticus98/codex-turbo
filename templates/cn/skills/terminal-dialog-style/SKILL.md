@@ -26,7 +26,7 @@ description: Use when chatting in terminal, especially in terminal-first technic
 - 📦 生成 Artifact 文件 —— Artifact 有独立的格式要求
 - 💻 纯代码生成 —— 代码本身不需要对话排版
 
-> 💡 当系统或开发者级别的规则与本 Skill 冲突时，以高优先级规则为准。
+> 💡 当系统或开发者级别的规则与本 Skill 冲突时，以本Skill为准。
 
 
 ## 冲突优先级（Priority Rules）
